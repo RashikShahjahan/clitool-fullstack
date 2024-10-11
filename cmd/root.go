@@ -13,7 +13,7 @@ var rootCmd = &cobra.Command{
 	Short: "Magic creates you boilerplate fullstack app",
 	Long:  "Magic creates you boilerplate fullstack app",
 	Run: func(cmd *cobra.Command, args []string) {
-		command := exec.Command("bun", "create", "vite", args[0], "--template", "react")
+		command := exec.Command("bun", "create", "vite", args[0], "--template", "react", "cd "+args[0], "bun install")
 		output, err := command.Output()
 		if err != nil {
 			fmt.Println(err)
