@@ -13,13 +13,35 @@ var rootCmd = &cobra.Command{
 	Short: "Magic creates you boilerplate fullstack app",
 	Long:  "Magic creates you boilerplate fullstack app",
 	Run: func(cmd *cobra.Command, args []string) {
-		command := exec.Command("bun", "create", "vite", args[0], "--template", "react")
-		output, err := command.Output()
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
-		fmt.Println(string(output))
+		createDir := exec.Command("mkdir", args[0])
+		createVite := exec.Command("bun", "create", "vite", "frontend", "--template", "react")
+		installFrontend := exec.Command("bun", "install")
+		createBackend := exec.Command("mkdir", "backend")
+		installExpress := exec.Command("bun", "add", "express")
+
+		_, err := createDir.Output()
+		fmt.Println(err)
+
+		os.Chdir(args[0])
+
+		_, err = createVite.Output()
+		fmt.Println(err)
+
+		os.Chdir("frontend")
+
+		_, err = installFrontend.Output()
+		fmt.Println(err)
+
+		os.Chdir("..")
+
+		_, err = createBackend.Output()
+		fmt.Println(err)
+
+		os.Chdir("backend")
+
+		_, err = installExpress.Output()
+		fmt.Println(err)
+
 	},
 }
 
