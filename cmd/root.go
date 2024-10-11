@@ -20,7 +20,7 @@ var rootCmd = &cobra.Command{
 		fmt.Print("Please enter project path: ")
 		fmt.Scanln(&path)
 		createDir := exec.Command("mkdir", path)
-		createVite := exec.Command("bun", "create", "vite", "frontend", "--template", "react")
+		createVite := exec.Command("bun", "create", "vite", "frontend", "--template", "react-swc-ts")
 		installFrontend := exec.Command("bun", "install")
 		createBackend := exec.Command("mkdir", "backend")
 		installExpress := exec.Command("bun", "add", "express")
