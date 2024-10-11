@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"strings"
 
 	"github.com/spf13/cobra"
 )
@@ -13,7 +14,12 @@ var rootCmd = &cobra.Command{
 	Short: "Magic creates you boilerplate fullstack app",
 	Long:  "Magic creates you boilerplate fullstack app",
 	Run: func(cmd *cobra.Command, args []string) {
-		createDir := exec.Command("mkdir", args[0])
+		var path string
+		var needDB string
+
+		fmt.Print("Please enter project path: ")
+		fmt.Scanln(&path)
+		createDir := exec.Command("mkdir", path)
 		createVite := exec.Command("bun", "create", "vite", "frontend", "--template", "react")
 		installFrontend := exec.Command("bun", "install")
 		createBackend := exec.Command("mkdir", "backend")
@@ -22,7 +28,7 @@ var rootCmd = &cobra.Command{
 		_, err := createDir.Output()
 		fmt.Println(err)
 
-		os.Chdir(args[0])
+		os.Chdir(path)
 
 		_, err = createVite.Output()
 		fmt.Println(err)
@@ -41,6 +47,32 @@ var rootCmd = &cobra.Command{
 
 		_, err = installExpress.Output()
 		fmt.Println(err)
+
+		fmt.Println("Do you need a Database? (Y/N)")
+		fmt.Scanln(&needDB)
+
+		if strings.ToLower(needDB) == strings.ToLower("Y") {
+			var dockerpath string
+			installPrisma := exec.Command("bun", "add", "prisma")
+			_, err = installPrisma.Output()
+			fmt.Println(err)
+
+			prismaInit := exec.Command("npx", "prisma", "init")
+			_, err = prismaInit.Output()
+			fmt.Print("Please enter docker file path: ")
+			fmt.Scanln(&dockerpath)
+			dockerPull := exec.Command("docker-compose", "-f", dockerpath, "pull")
+			_, err = dockerPull.Output()
+			fmt.Println(err)
+			dockerUp := exec.Command("docker-compose", "-f", dockerpath, "up", "-d")
+			_, err = dockerUp.Output()
+			fmt.Println(err)
+
+			newContent := `DATABASE_URL="postgresql://postgres:postgres@localhost:10011"`
+
+			err = os.WriteFile(".env", []byte(newContent), 0644)
+
+		}
 
 	},
 }
